@@ -19,7 +19,21 @@ jobs:
         with:
           arch: aarch64
           distro: ubuntu18.04
-
+          install: |
+              case "${{ matrix.distro }}" in
+                ubuntu*|jessie|stretch|buster|bullseye)
+                  apt-get update -q -y
+                  apt-get install -q -y git curl
+                  ;;
+                fedora*)
+                  dnf -y update
+                  dnf -y install git which curl
+                  ;;
+                alpine*)
+                  apk update
+                  apk add git curl
+                  ;;
+              esac
 
           # Set an output parameter `uname` for use in subsequent steps
           run: |
