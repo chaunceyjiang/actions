@@ -24,11 +24,15 @@ jobs:
           run: |
             uname -a
             apt-get update -q -y
-            apt-get install -q -y curl docker
+            apt-get install -q -y curl ca-certificates gnupg lsb-release
+            curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+            echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+            apt-get update
+            apt-get install docker-ce docker-ce-cli containerd.io
             KUBERNETES_VERSION=${INPUT_KUBERNETES_VERSION:=${KUBERNETES_RELEASE_VERSION}}
             echo "currect version ${KUBERNETES_VERSION}"
             
-            curl -O -L https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubeadm
+            curl -O -L https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/arm64/kubeadm
             chmod +x kubeadm
             images=$(./kubeadm config images list --kubernetes-version=${KUBERNETES_VERSION})
             
