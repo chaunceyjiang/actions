@@ -24,9 +24,31 @@ jobs:
           run: |
             uname -a
             apt-get update -q -y
-            apt-get install -q -y git curl
-            curl -O -L https://storage.googleapis.com/kubernetes-release/release/$(curl -sSL https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubeadm
+            apt-get install -q -y curl docker
+            KUBERNETES_VERSION=${INPUT_KUBERNETES_VERSION:=${KUBERNETES_RELEASE_VERSION}}
+            echo "currect version ${KUBERNETES_VERSION}"
+            
+            curl -O -L https://storage.googleapis.com/kubernetes-release/release/${KUBERNETES_VERSION}/bin/linux/amd64/kubeadm
             chmod +x kubeadm
+            images=$(./kubeadm config images list --kubernetes-version=${KUBERNETES_VERSION})
+            
+            echo "image list: ${images}"
+            
+            echo ${{ secrets.DOCKER_PASSWORD }} | docker login -u ${{ secrets.DOCKER_USERNAME }} --password-stdin chaunceyjiang
+            
+            while IFS='/' read key value; do
+                image=${key}/${value}
+                docker pull ${image}
+                if [[ "${value}" == "coredns/coredns"* ]]; then
+                    value=${value/coredns\//""}
+                fi
+            
+                new_image=chaunceyjiang/${value}
+
+                docker tag ${image} ${new_image}
+                docker push ${new_image}
+            done <<< ${images}
+
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
         run: |
