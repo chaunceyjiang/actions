@@ -23,6 +23,7 @@ jobs:
           # Set an output parameter `uname` for use in subsequent steps
           run: |
             uname -a
+            apt-get update -q -y
             apt-get install -q -y git curl
             curl -O -L https://storage.googleapis.com/kubernetes-release/release/$(curl -sSL https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubeadm
             chmod +x kubeadm
