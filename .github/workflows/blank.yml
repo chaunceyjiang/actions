@@ -17,15 +17,15 @@ jobs:
         name: Run commands
         id: runcmd
         with:
-          arch: aarrch64
+          arch: aarch64
           distro: ubuntu18.04
 
 
           # Set an output parameter `uname` for use in subsequent steps
           run: |
             uname -a
-            docker pull
-
+            curl -O -L https://storage.googleapis.com/kubernetes-release/release/$(curl -sSL https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubeadm
+            chmod +x kubeadm
       - name: Get the output
         # Echo the `uname` output parameter from the `runcmd` step
         run: |
