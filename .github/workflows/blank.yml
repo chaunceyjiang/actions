@@ -5,7 +5,7 @@ name: k8s-arm64-sync
 on:
   schedule:
     # * is a special character in YAML so you have to quote this string
-    - cron:  '*/10 * * * *'
+    - cron:  '0,10,20,30,40,50 * * * *'
     
 jobs:
   armv7_job:
