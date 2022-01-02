@@ -2,10 +2,12 @@
 
 name: k8s-arm64-image-sync
 
+# on:
+#   schedule:
+#     # * is a special character in YAML so you have to quote this string
+#     - cron:  '0 * * * *'
 on:
-  schedule:
-    # * is a special character in YAML so you have to quote this string
-    - cron:  '0,10,20,30,40,50 * * * *'
+  fork
     
 jobs:
   armv7_job:
